@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <string>
 
 const int pushButton = 2;
 const int kRedPin = 3;
@@ -15,7 +14,7 @@ typedef struct {
   int red;
   int green;
   int blue;
-  std::string name;
+  const char* name;
 } Color;
 
 Color colors[] = {
@@ -61,7 +60,7 @@ void loop() {
     setColor(colorIndex);
     
     Serial.print("Color changed to: ");
-    Serial.println(colors[colorIndex].name.c_str());
+    Serial.println(colors[colorIndex].name);
   }
 
   lastButtonState = ButtonIsPressed;
