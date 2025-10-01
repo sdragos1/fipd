@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 const int RED_PIN = 9;
 const int BLUE_PIN = 10;
 const int GREEN_PIN = 11;
