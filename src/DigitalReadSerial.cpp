@@ -6,9 +6,12 @@ const int kBluePin = 4;
 const int kGreenPin = 5;
 
 int buttonState = 0;
-bool ButtonIsPressed = false;
+bool buttonPressed = false;
 bool lastButtonState = false;
-int colorIndex = 0;
+unsigned short clickCount = 0;
+
+unsigned long prevMillis = 0;
+const long interval = 500; // milliseconds
 
 typedef struct {
   int red;
@@ -17,18 +20,20 @@ typedef struct {
   const char* name;
 } Color;
 
+int colorIndex = 0;
+
 Color colors[] = {
-  {HIGH, LOW, LOW, "Red"},
-  {LOW, HIGH, LOW, "Green"},
-  {LOW, LOW, HIGH, "Blue"},
-  {HIGH, HIGH, LOW, "Yellow"},
-  {HIGH, LOW, HIGH, "Magenta"},
-  {LOW, HIGH, HIGH, "Cyan"},
-  {HIGH, HIGH, HIGH, "White"},
-  {LOW, LOW, LOW, "Off"}
+  {LOW, HIGH, HIGH, "Red"},
+  {HIGH, LOW, HIGH, "Green"},
+  {HIGH, HIGH, LOW, "Blue"},
+  {LOW, LOW, HIGH, "Yellow"},
+  {LOW, HIGH, LOW, "Magenta"},
+  {HIGH, LOW, LOW, "Cyan"},
+  {LOW, LOW, LOW, "White"}
 };
 
-const int numColors = 8;
+
+const int numColors = sizeof(colors) / sizeof(colors[0]);
 
 void setup() {
   Serial.begin(9600);
@@ -40,9 +45,9 @@ void setup() {
 
 void updateButtonState() {
   if (digitalRead(pushButton) == HIGH) {
-    ButtonIsPressed = true;
+    buttonPressed = true;
   } else {
-    ButtonIsPressed = false;
+    buttonPressed = false;
   }
 }
 
@@ -52,18 +57,30 @@ void setColor(int index) {
   digitalWrite(kBluePin, colors[index].blue);
 }
 
+unsigned long computeDeltaTime() {
+  return millis() - prevMillis;
+}
+
 void loop() {
   updateButtonState();
-
-  if (ButtonIsPressed && !lastButtonState) {
-    colorIndex = (colorIndex + 1) % numColors;
-    setColor(colorIndex);
-    
-    Serial.print("Color changed to: ");
-    Serial.println(colors[colorIndex].name);
+  if (buttonPressed && !lastButtonState) {
+    clickCount++;
+    Serial.print("Click count: ");
+    Serial.println(clickCount);
+    if (clickCount >= 2) {
+      clickCount = 0;
+      colorIndex = (colorIndex + 1) % numColors;
+      setColor(colorIndex);
+      
+      Serial.print("Color changed to: ");
+      Serial.println(colors[colorIndex].name);
+    }
   }
 
-  lastButtonState = ButtonIsPressed;
-  
-  delay(50);
+  if (computeDeltaTime() >= interval) {
+    clickCount = 0;
+    prevMillis = millis();
+  }
+
+  lastButtonState = buttonPressed;
 }
