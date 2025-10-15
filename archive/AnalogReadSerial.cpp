@@ -72,7 +72,7 @@ void hsvToRgb(int h, int s, int v, int *rgb)
 
 void loop()
 {
-    sensorValue = analogRead(analogInPin);
+    sensorValue = digitalRead(digitalIn);
 
     hue = map(sensorValue, 0, 1023, 0, 366);
 

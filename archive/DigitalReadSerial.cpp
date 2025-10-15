@@ -11,7 +11,7 @@ bool lastButtonState = false;
 unsigned short clickCount = 0;
 
 unsigned long prevMillis = 0;
-const long interval = 500; // milliseconds
+const long interval = 500;
 
 typedef struct {
   int red;
