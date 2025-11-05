@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-const int pushButton = 2;
+const int kButtonPin = 2;
 const int kRedPin = 3;
 const int kBluePin = 4;
 const int kGreenPin = 5;
@@ -40,11 +40,11 @@ void setup() {
   pinMode(kRedPin, OUTPUT);
   pinMode(kGreenPin, OUTPUT);
   pinMode(kBluePin, OUTPUT);
-  pinMode(pushButton, INPUT);
+  pinMode(kButtonPin, INPUT);
 }
 
 void updateButtonState() {
-  if (digitalRead(pushButton) == HIGH) {
+  if (digitalRead(kButtonPin) == HIGH) {
     buttonPressed = true;
   } else {
     buttonPressed = false;

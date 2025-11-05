@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
-const int RED_PIN = 9;
-const int BLUE_PIN = 10;
-const int GREEN_PIN = 11;
+const int kRedPin = 9;
+const int kBluePin = 10;
+const int kGreenPin = 11;
 const int BUTTON_PIN = 2;
 
 enum LampMode
@@ -32,21 +32,21 @@ unsigned long flickerTime = 0;
 
 void setup()
 {
-    pinMode(RED_PIN, OUTPUT);
-    pinMode(GREEN_PIN, OUTPUT);
-    pinMode(BLUE_PIN, OUTPUT);
+    pinMode(kRedPin, OUTPUT);
+    pinMode(kGreenPin, OUTPUT);
+    pinMode(kBluePin, OUTPUT);
     pinMode(BUTTON_PIN, INPUT_PULLUP);
 
-    analogWrite(RED_PIN, 255);
-    analogWrite(GREEN_PIN, 255);
-    analogWrite(BLUE_PIN, 255);
+    analogWrite(kRedPin, 255);
+    analogWrite(kGreenPin, 255);
+    analogWrite(kBluePin, 255);
 }
 
 void setColor(int r, int g, int b)
 {
-    analogWrite(RED_PIN, 255 - r);
-    analogWrite(GREEN_PIN, 255 - g);
-    analogWrite(BLUE_PIN, 255 - b);
+    analogWrite(kRedPin, 255 - r);
+    analogWrite(kGreenPin, 255 - g);
+    analogWrite(kBluePin, 255 - b);
 }
 
 void nightFuryEffect()
