@@ -1,20 +1,20 @@
 #include <Arduino.h>
 
-const int RED_PIN = 9;
-const int BLUE_PIN = 10;
-const int GREEN_PIN = 11;
+const int kRedPin = 9;
+const int kBluePin = 10;
+const int kGreenPin = 11;
 
 void setColor(unsigned int r, unsigned int g, unsigned int b)
 {
-  analogWrite(RED_PIN, 255 - r);
-  analogWrite(GREEN_PIN, 255 - g);
-  analogWrite(BLUE_PIN, 255 - b);
+  analogWrite(kRedPin, 255 - r);
+  analogWrite(kGreenPin, 255 - g);
+  analogWrite(kBluePin, 255 - b);
 }
 
 void setup() {
-  pinMode(RED_PIN, OUTPUT);
-  pinMode(BLUE_PIN, OUTPUT);
-  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(kRedPin, OUTPUT);
+  pinMode(kBluePin, OUTPUT);
+  pinMode(kGreenPin, OUTPUT);
 }
 
 int count = 255;
