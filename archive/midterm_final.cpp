@@ -37,7 +37,7 @@ unsigned long prevMillis = 0;
 unsigned long modeSwitchInterval = 500;
 unsigned long modeSwitchAccumulator = 0;
 
-unsigned long colorSwitchInterval = 1000;
+unsigned long colorSwitchInterval = 2000;
 unsigned long colorSwitchAccumulator = 0;
 
 unsigned long blinkInterval = 500;
@@ -143,7 +143,7 @@ void policeSiren()
     static int brightness = 0;          // Current brightness (0-255)
     static int direction = 1;           // 1=getting brighter, -1=getting dimmer
     static bool isRed = true;           // true=red phase, false=blue phase
-    static int stepSize = 3;            // How fast to fade
+    static int stepSize = 15;            // How fast to fade
     
     if (sirenAccumulator >= sirenInterval)
     {
@@ -257,7 +257,7 @@ void loop()
         break;
 
     case POLICE_SIREN:
-        turnOff();
+        policeSiren();
         break;
 
     default:
