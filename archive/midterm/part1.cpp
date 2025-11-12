@@ -27,7 +27,7 @@ enum Mode
 
 Mode currentMode = RAINBOW_CYCLE;
 
-unsigned short kTotalModes = 3;
+unsigned short kTotalModes = sizeof(rainbowColors) / sizeof(ColorRGB);
 
 unsigned long prevMillis = 0;
 
@@ -44,11 +44,9 @@ unsigned long fadeAccumulator = 0;
 
 unsigned long buttonPressStartTime = 0;
 bool buttonWasPressed = false;
-const unsigned long longPressDuration = 1500;
 bool longPressTriggered = false;
-
-const unsigned long shortPressDuration = 500;
-bool shortPressTriggered = false;
+const unsigned long longPressDuration = 1500;
+const unsigned long longPressDuration = 1500;
 
 int sensorValue = 0;
 bool prevButtonState = false;
@@ -156,7 +154,7 @@ void whiteFade()
 
 void loop()
 {
-    int sensorValue = digitalRead(kButtonPin);
+   int sensorValue = digitalRead(kButtonPin);
 
     updateTime();
 
@@ -167,47 +165,26 @@ void loop()
         longPressTriggered = false;
     }
 
-    
-    if (sensorValue == HIGH && buttonWasPressed)
-    {
-        buttonWasPressed = false;
-
-        longPressTriggered = false;
-        shortPressTriggered = false;
-
-        if (!longPressTriggered && !shortPressTriggered)
-        {
-            currentMode = (Mode)((currentMode + 1) % kTotalModes);
-        }
-    }
-
     if (sensorValue == LOW && buttonWasPressed && !longPressTriggered)
     {
         if (millis() - buttonPressStartTime >= longPressDuration)
         {
             longPressTriggered = true;
             fadeAccumulator = 0;
-        } else {
-            longPressTriggered = false;
         }
-        if (millis() - buttonPressStartTime >= shortPressDuration)
-        {
-            
-            shortPressTriggered = true;
-            fadeAccumulator = 0;
-        }
-    }
-    if (shortPressTriggered && !longPressTriggered)
-    {
-        setWhiteFade(0);
-        return;
-    }
-    if (longPressTriggered)
-    {
-        setWhiteFade(0);
-        return;
     }
 
+    if (sensorValue == HIGH && buttonWasPressed)
+    {
+        buttonWasPressed = false;
+        
+        if (!longPressTriggered)
+        {
+            currentMode = (Mode)((currentMode + 1) % kTotalModes);
+        } else {
+            whiteFade();
+        }
+    }
 
     switch (currentMode)
     {
@@ -216,13 +193,15 @@ void loop()
         break;
 
     case YELLOW_BLINK:
-        rainbowCycle();
+        currColor = ColorRGB::kYellow;
+        blink();
         break;
-
+        
     case RED_BLINK:
-        rainbowCycle();
+        currColor = ColorRGB::kRed;
+        blink();
         break;
-
+        
     default:
         break;
     }
