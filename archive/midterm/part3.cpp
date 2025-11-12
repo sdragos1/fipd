@@ -257,7 +257,7 @@ void loop()
         break;
 
     case POLICE_SIREN:
-        turnOff();
+        policeSiren();
         break;
 
     default:
