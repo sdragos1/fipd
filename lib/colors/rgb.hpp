@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 class ColorHSL;
+class ColorHSV;
 
 class ColorRGB
 {
@@ -17,6 +18,8 @@ public:
     int toHex() const;
 
     ColorHSL toHSL() const;
+
+    ColorHSV toHSV() const;
 
     static const ColorRGB kBlack;
     static const ColorRGB kWhite;
