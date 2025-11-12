@@ -11,41 +11,42 @@ const int kGreenPin = 11;
 int buttonState = 0;
 
 ColorRGB rainbowColors[] = {
-    ColorRGB::kRed,
-    ColorRGB::kYellow,
     ColorRGB::kGreen,
-    ColorRGB::kBlue,
-    ColorRGB::kMagenta,
+    ColorRGB::kYellow,
+    ColorRGB::kRed,
 };
 int currRainbowIndex = 0;
-ColorRGB currColor = ColorRGB::kRed;
+ColorRGB currColor = ColorRGB::kGreen;
 
 enum Mode
 {
     RAINBOW_CYCLE,
-    WHITE_FADE,
-};
-
-enum RainbowType {
-    RAINBOW_FULL,
-    RAINBOW_BLINK,
+    YELLOW_BLINK,
+    RED_BLINK,
 };
 
 Mode currentMode = RAINBOW_CYCLE;
-RainbowType currentRainbowType = RAINBOW_FULL;
+
+unsigned short kTotalModes = sizeof(rainbowColors) / sizeof(ColorRGB);
 
 unsigned long prevMillis = 0;
 
 unsigned long modeSwitchInterval = 500;
 unsigned long modeSwitchAccumulator = 0;
 
-unsigned long colorSwitchInterval = 1000;
+unsigned long colorSwitchInterval = 2000;
 unsigned long colorSwitchAccumulator = 0;
 
 unsigned long blinkInterval = 250;
 unsigned long blinkAccumulator = 0;
 
 unsigned long fadeAccumulator = 0;
+
+unsigned long buttonPressStartTime = 0;
+bool buttonWasPressed = false;
+bool longPressTriggered = false;
+const unsigned long longPressDuration = 1500;
+const unsigned long longPressDuration = 1500;
 
 int sensorValue = 0;
 bool prevButtonState = false;
@@ -93,34 +94,34 @@ void nextColor()
 
 void rainbowCycle()
 {
-    if (currentRainbowType == RAINBOW_BLINK)
-    {
-        if (blinkAccumulator >= blinkInterval)
-        {
-            blinkAccumulator = 0;
-            static bool isOn = true;
-            if (isOn)
-            {
-                analogWrite(kRedPin, 255);
-                analogWrite(kGreenPin, 255);
-                analogWrite(kBluePin, 255);
-            }
-            else
-            {
-                nextColor();
-                refreshColor();
-            }
-            isOn = !isOn;
-        }
-        return;
-    }
     if (colorSwitchAccumulator >= colorSwitchInterval)
     {
         colorSwitchAccumulator = 0;
-        
+
         nextColor();
         refreshColor();
     }
+}
+
+void blink()
+{
+    if (blinkAccumulator >= blinkInterval)
+    {
+        blinkAccumulator = 0;
+        static bool isOn = true;
+        if (isOn)
+        {
+            analogWrite(kRedPin, 255);
+            analogWrite(kGreenPin, 255);
+            analogWrite(kBluePin, 255);
+        }
+        else
+        {
+            refreshColor();
+        }
+        isOn = !isOn;
+    }
+    return;
 }
 
 void whiteFade()
@@ -129,7 +130,7 @@ void whiteFade()
     static int fadeBrightness = 0;
     static int fadeDirection = 1;
     static int fadeStep = 5;
-    
+
     if (fadeAccumulator >= fadeInterval)
     {
         fadeAccumulator = 0;
@@ -153,31 +154,56 @@ void whiteFade()
 
 void loop()
 {
-    int sensorValue = digitalRead(kButtonPin);
+   int sensorValue = digitalRead(kButtonPin);
 
     updateTime();
 
-    if (sensorValue == LOW && !prevButtonState)
+    if (sensorValue == LOW && !buttonWasPressed)
     {
-        prevButtonState = true;
-        currentMode = WHITE_FADE;
-        fadeAccumulator = 0;
-    }
-    if (sensorValue == HIGH && prevButtonState)
-    {
-        prevButtonState = false;
-        currentMode = RAINBOW_CYCLE;
-        currentRainbowType = (RainbowType)((currentRainbowType + 1) % 2);
-        refreshColor();
+        buttonWasPressed = true;
+        buttonPressStartTime = millis();
+        longPressTriggered = false;
     }
 
-    if (currentMode == RAINBOW_CYCLE)
+    if (sensorValue == LOW && buttonWasPressed && !longPressTriggered)
     {
-        rainbowCycle();
+        if (millis() - buttonPressStartTime >= longPressDuration)
+        {
+            longPressTriggered = true;
+            fadeAccumulator = 0;
+        }
     }
-    if (currentMode == WHITE_FADE)
+
+    if (sensorValue == HIGH && buttonWasPressed)
     {
-        whiteFade();
+        buttonWasPressed = false;
+        
+        if (!longPressTriggered)
+        {
+            currentMode = (Mode)((currentMode + 1) % kTotalModes);
+        } else {
+            whiteFade();
+        }
+    }
+
+    switch (currentMode)
+    {
+    case RAINBOW_CYCLE:
+        rainbowCycle();
+        break;
+
+    case YELLOW_BLINK:
+        currColor = ColorRGB::kYellow;
+        blink();
+        break;
+        
+    case RED_BLINK:
+        currColor = ColorRGB::kRed;
+        blink();
+        break;
+        
+    default:
+        break;
     }
 
     delay(10);
