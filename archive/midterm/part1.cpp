@@ -227,7 +227,7 @@ void loop()
         if (!mediumPressTriggered && !longPressTriggered)
         {
 
-            currentMode = (Mode)((currentMode + 1) % kTotalModes);
+            currentMode = RAINBOW_CYCLE;
             modeBeforeOff = currentMode;
             refreshColor();
         }

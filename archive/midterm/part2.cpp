@@ -1,4 +1,4 @@
-a#include <Arduino.h>
+#include <Arduino.h>
 
 #include "rgb.hpp"
 
@@ -52,7 +52,7 @@ bool buttonWasPressed = false;
 bool mediumPressTriggered = false;
 bool longPressTriggered = false;
 const unsigned long mediumPressDuration = 500; // 0.5 seconds to turn off
-const unsigned long longPressDuration = 2000;  // 2 seconds for police siren
+const unsigned long longPressDuration = 1500;  // 2 seconds for police siren
 
 int sensorValue = 0;
 
